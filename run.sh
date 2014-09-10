@@ -23,7 +23,9 @@ mkdir -p $outDir
 filesDir=$scriptDir/files
 pyversion=2.7
 pythonPackageName=Python-2.7.3
+#numpyPackageName=numpy-1.9.0
 numpyPackageName=numpy-1.6.2
+
 pythonSourceDir=$outDir/$pythonPackageName
 numpySourceDir=$outDir/$numpyPackageName
 installDir=$outDir/install
@@ -51,7 +53,7 @@ extractAndBuildPython()
   # setup builtin modules
   cp $filesDir/Setup.local ./Modules/
 
-  ./configure install --disable-shared --prefix $installDir || exit
+  ./configure install --disable-shared --enable-unicode=ucs2 --prefix $installDir || exit
   $make $makeParallel || exit
   $make install || exit
 }
@@ -106,11 +108,11 @@ buildHelloNumpy()
     linkFlags=""
     requiredBlasLibrary="-framework Accelerate"
   else
-    linkFlags="-Xlinker -export-dynamic"
-    requiredBlasLibrary=""
+    linkFlags="-Xlinker -export-dynamic -Dsecure_getenv=__secure_getenv"
+    requiredBlasLibrary="/usr/lib/liblapack_atlas.a /usr/lib/libcblas.a /usr/lib/libatlas.a /usr/lib/libf77blas.a /usr/lib/libblas.a /usr/lib/gcc/i586-linux-gnu/4.9/libgfortran.a /usr/lib/gcc/i586-linux-gnu/4.9/libquadmath.a"
   fi
 
-  requiredLibs="-lpthread -lm -ldl -lutil"
+  requiredLibs="-lpthread -lm -ldl -lutil -static-libstdc++ -static-libgcc"
 
   # compile hello.c
   $gcc $linkFlags -o hello hello.c -I$pythonInclude $pythonLibrary $requiredLibs
