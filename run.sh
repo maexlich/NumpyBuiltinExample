@@ -53,7 +53,7 @@ extractAndBuildPython()
   # setup builtin modules
   cp $filesDir/Setup.local ./Modules/
 
-  ./configure install --disable-shared --enable-unicode=ucs2 --prefix $installDir || exit
+  ./configure install --disable-shared --enable-unicode=ucs4 --prefix $installDir || exit
   $make $makeParallel || exit
   $make install || exit
 }
@@ -103,16 +103,18 @@ buildHelloNumpy()
   numpyObjects=$(find $numpyBuildDir -name \*.o)
   frozenSources=$(find $freezeOutputDir -name M_\*.c)
 
+  ln -s `g++ -print-file-name=libstdc++.a`
+
   # osx and linux take slightly different linking flags
   if [ "$(uname)" == "Darwin" ]; then
     linkFlags=""
     requiredBlasLibrary="-framework Accelerate"
   else
-    linkFlags="-Xlinker -export-dynamic -Dsecure_getenv=__secure_getenv"
-    requiredBlasLibrary="/usr/lib/liblapack_atlas.a /usr/lib/libcblas.a /usr/lib/libatlas.a /usr/lib/libf77blas.a /usr/lib/libblas.a /usr/lib/gcc/i586-linux-gnu/4.9/libgfortran.a /usr/lib/gcc/i586-linux-gnu/4.9/libquadmath.a"
+    linkFlags="-Xlinker -export-dynamic"
+    requiredBlasLibrary="/usr/lib/atlas-base/atlas/liblapack.a /usr/lib/atlas-base/atlas/libblas.a /usr/lib/gcc/i486-linux-gnu/4.4/libgfortran.a libstdc++.a"
   fi
 
-  requiredLibs="-lpthread -lm -ldl -lutil -static-libstdc++ -static-libgcc"
+  requiredLibs="-lpthread -lm -ldl -lutil -static-libgcc"
 
   # compile hello.c
   $gcc $linkFlags -o hello hello.c -I$pythonInclude $pythonLibrary $requiredLibs
