@@ -4,12 +4,15 @@
 # and the output will be placed in a new directory named 'build'.
 #
 
+BOINC_DIR=/boinc-src
+
 # these tools will be used
 gcc=`which gcc`
 make=`which make`
 patch=`which patch`
 head=`which head`
 tar=`which tar`
+gpp=`which g++`
 makeParallel=-j8
 
 # get the location of this script
@@ -23,7 +26,6 @@ mkdir -p $outDir
 filesDir=$scriptDir/files
 pyversion=2.7
 pythonPackageName=Python-2.7.3
-#numpyPackageName=numpy-1.9.0
 numpyPackageName=numpy-1.6.2
 
 pythonSourceDir=$outDir/$pythonPackageName
@@ -89,21 +91,26 @@ runFreezeTool()
   $head -n $numberOfLinesToKeep frozen.c > frozen.h
 }
 
-buildHelloNumpy()
+buildloader()
 {
   cd $outDir
-  cp -r $filesDir/helloNumpy ./
-  cd helloNumpy
+  cp -r $filesDir/loader ./
+  cd loader
 
   pythonInclude=$installDir/include/python$pyversion
   pythonLibrary=$installDir/lib/libpython$pyversion.a
   numpyBuildDir=$numpySourceDir/build
+
+  loaderFiles="linker_generator.c linux_functions.c res/libboinc_api.a res/libboinc_zip.a res/libboinc.a temp_exit_wrapper.o"
+  boincIncludes="-I$BOINC_DIR/api -I$BOINC_DIR/lib -I$BOINC_DIR/zip"
 
   # glob numpy .o files and frozen .c source files
   numpyObjects=$(find $numpyBuildDir -name \*.o)
   frozenSources=$(find $freezeOutputDir -name M_\*.c)
 
   ln -s `g++ -print-file-name=libstdc++.a`
+
+  $gpp -c temp_exit_wrapper.cpp $boincIncludes -o temp_exit_wrapper.o
 
   # osx and linux take slightly different linking flags
   if [ "$(uname)" == "Darwin" ]; then
@@ -116,12 +123,8 @@ buildHelloNumpy()
 
   requiredLibs="-lpthread -lm -ldl -lutil -static-libgcc"
 
-  # compile hello.c
-  $gcc $linkFlags -o hello hello.c -I$pythonInclude $pythonLibrary $requiredLibs
-
-  # compile hello.c with HELLO_FROZEN defined
   # this build includes the numpy object files and frozen source files
-  $gcc $linkFlags -DHELLO_FROZEN -o helloFrozen hello.c -I$pythonInclude -I$freezeOutputDir \
+  $gcc $linkFlags -o linker_gen $loaderFiles $boincIncludes -I$pythonInclude -I$freezeOutputDir \
         $frozenSources \
         $numpyObjects \
         $pythonLibrary \
@@ -134,8 +137,8 @@ buildHelloNumpy()
 # call the script routines
 
 set -x
-extractAndBuildPython
-extractAndBuildNumpy
-runFreezeTool
-buildHelloNumpy
+#extractAndBuildPython
+#extractAndBuildNumpy
+#runFreezeTool
+buildloader
 
