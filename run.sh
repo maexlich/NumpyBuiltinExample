@@ -101,7 +101,7 @@ buildloader()
   pythonLibrary=$installDir/lib/libpython$pyversion.a
   numpyBuildDir=$numpySourceDir/build
 
-  loaderFiles="linker_generator.c linux_functions.c res/libboinc_api.a res/libboinc_zip.a res/libboinc.a temp_exit_wrapper.o"
+  loaderFiles="linker_generator.c linux_functions.c res/libboinc_api.a res/libboinc_zip.a res/libboinc.a cpp-wrappers.o"
   boincIncludes="-I$BOINC_DIR/api -I$BOINC_DIR/lib -I$BOINC_DIR/zip"
 
   # glob numpy .o files and frozen .c source files
@@ -110,7 +110,7 @@ buildloader()
 
   ln -s `g++ -print-file-name=libstdc++.a`
 
-  $gpp -c temp_exit_wrapper.cpp $boincIncludes -o temp_exit_wrapper.o
+  $gpp -c cpp-wrappers.cpp $boincIncludes -o cpp-wrappers.o
 
   # osx and linux take slightly different linking flags
   if [ "$(uname)" == "Darwin" ]; then
@@ -137,8 +137,8 @@ buildloader()
 # call the script routines
 
 set -x
-#extractAndBuildPython
-#extractAndBuildNumpy
-#runFreezeTool
+extractAndBuildPython
+extractAndBuildNumpy
+runFreezeTool
 buildloader
 
