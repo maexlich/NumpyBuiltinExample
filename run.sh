@@ -4,7 +4,7 @@
 # and the output will be placed in a new directory named 'build'.
 #
 
-BOINC_DIR=/boinc-src
+BOINC_DIR=/home/maexlich/iGEM/boinc/boinc-src
 
 # these tools will be used
 gcc=`which gcc`
@@ -118,7 +118,7 @@ buildloader()
     requiredBlasLibrary="-framework Accelerate"
   else
     linkFlags="-Xlinker -export-dynamic"
-    requiredBlasLibrary="/usr/lib/atlas-base/atlas/liblapack.a /usr/lib/atlas-base/atlas/libblas.a /usr/lib/gcc/i486-linux-gnu/4.4/libgfortran.a libstdc++.a"
+    requiredBlasLibrary="/usr/lib/atlas-base/atlas/liblapack.a /usr/lib/atlas-base/atlas/libblas.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libgfortran.a libstdc++.a"
   fi
 
   requiredLibs="-lpthread -lm -ldl -lutil -static-libgcc"
