@@ -175,7 +175,6 @@ static PyObject *exitFunction(PyObject *self, PyObject *args){
 		return 0;
 	}
 	print_error("py_exit", "loader.exit called: ", logstring);
-	Py_Finalize();
 }
 
 static PyMethodDef loader_methods[] = {
