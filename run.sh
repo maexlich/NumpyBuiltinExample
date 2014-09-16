@@ -108,7 +108,7 @@ buildloader()
   numpyObjects=$(find $numpyBuildDir -name \*.o)
   frozenSources=$(find $freezeOutputDir -name M_\*.c)
 
-  ln -s `g++ -print-file-name=libstdc++.a`
+  ln -s `$gpp -print-file-name=libstdc++.a`
 
   $gpp -c cpp-wrappers.cpp $boincIncludes -o cpp-wrappers.o
 

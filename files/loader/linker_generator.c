@@ -34,7 +34,7 @@
 
 #define APP_NAME "linker_generator"
 #define APP_MAJOR 0
-#define APP_MINOR 14
+#define APP_MINOR 16
 
  // Use linux functions
 #define getExecPath getExecPath_l
@@ -326,8 +326,8 @@ int call_python(char *ProgramName, char *python_path) {
 		Py_Finalize();
 		return -5;
 	}
-	ram = boinc_get_ram(0.45);
-	
+	//ram = boinc_get_ram(0.45);
+	ram = 1; // Set RAM to 1Gb
 	fprintf(stderr, "Calling Python Method with Arguments: %s, %s, %s, %f\n", resolved_files[0], resolved_files[1], resolved_files[2], ram);
 
 	PyObject_CallFunction(calc, "sssd", resolved_files[0], resolved_files[1], resolved_files[2], ram);
