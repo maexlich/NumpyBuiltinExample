@@ -101,7 +101,7 @@ buildloader()
   pythonLibrary=$installDir/lib/libpython$pyversion.a
   numpyBuildDir=$numpySourceDir/build
 
-  loaderFiles="linker_generator.c linux_functions.c res/libboinc_api.a res/libboinc_zip.a res/libboinc.a cpp-wrappers.o"
+  loaderFiles="linker_generator.c linux_functions.c cpp-wrappers.o"
   boincIncludes="-I$BOINC_DIR/api -I$BOINC_DIR/lib -I$BOINC_DIR/zip"
 
   # glob numpy .o files and frozen .c source files
@@ -118,7 +118,15 @@ buildloader()
     requiredBlasLibrary="-framework Accelerate"
   else
     linkFlags="-Xlinker -export-dynamic"
-    requiredBlasLibrary="/usr/lib/atlas-base/atlas/liblapack.a /usr/lib/atlas-base/atlas/libblas.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libgfortran.a libstdc++.a"
+    requiredBlasLibrary="/usr/lib/atlas-base/atlas/liblapack.a /usr/lib/atlas-base/atlas/libblas.a libstdc++.a"
+    ARCH=$(uname -m)
+    if [ ${ARCH} == 'x86_64' ]; then
+        requiredBlasLibrary="$requiredBlasLibrary /usr/lib/gcc/x86_64-linux-gnu/4.4/libgfortran.a"
+        loaderFiles="$loaderFiles  res/x86_64/libboinc_api.a res/x86_64/libboinc_zip.a res/x86_64/libboinc.a"
+    else
+        requiredBlasLibrary="$requiredBlasLibrary /usr/lib/gcc/i486-linux-gnu/4.4/libgfortran.a"
+        loaderFiles="$loaderFiles  res/i486/libboinc_api.a res/i486/libboinc_zip.a res/i486/libboinc.a"
+    fi
   fi
 
   requiredLibs="-lpthread -lm -ldl -lutil -static-libgcc"
