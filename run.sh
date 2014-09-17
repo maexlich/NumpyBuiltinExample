@@ -4,8 +4,6 @@
 # and the output will be placed in a new directory named 'build'.
 #
 
-BOINC_DIR=/home/maexlich/iGEM/boinc/boinc-src
-
 # these tools will be used
 gcc=`which gcc`
 make=`which make`
@@ -141,6 +139,30 @@ buildloader()
 
 }
 
+buildPythonModule()
+{
+  cd $outDir
+  cp -r $filesDir/python_module ./
+  cd python_module
+  cp $outDir/install/lib/libpython2.7.a .
+#  nuitka --module --standalone --python-version=2.7 --nofreeze-stdlib --recurse-not-to=numpy --recurse-not-to=loader --recurse-all --show-progress --show-scons linker_generator.py | tee nuitka.log
+  ln -s `$gpp -print-file-name=libstdc++.a`
+#  linkingStep=$(cat nuitka.log | tail -n 3 | head -n 1)
+#  linkingStep=$(echo $linkingStep | sed 's/-lpython2.7/libpython2.7.a/')
+#  linkingStep= "$linkingStep -static-libgcc -L."
+#  echo $linkingStep
+#  $linkingStep
+}
+
+#makeDeploy()
+#{
+#  mkdir deploy
+#  cd deploy
+#  cp $outDir/loader/linker_gen .
+#  cp $outDir/python_module/linker_generator.dist/linker_generator.so .
+#  zip -r linkergen_res.zip linker_generator.so
+#}
+
 ##########################
 # call the script routines
 
@@ -149,4 +171,4 @@ extractAndBuildPython
 extractAndBuildNumpy
 runFreezeTool
 buildloader
-
+#buildPythonModule
