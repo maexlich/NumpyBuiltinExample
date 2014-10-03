@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #ifdef __linux
 #include <dirent.h>
@@ -55,6 +56,7 @@
 
 #define DEBUG
 
+time_t start_time;
 
 int fileExists(char* name) {
   struct stat buf;
@@ -157,7 +159,12 @@ static PyObject *logFunction(PyObject *self, PyObject *args){
 		handle_pyerror("Parsing args tuble in log function");
 		return 0;
 	}
-	int chars_written = fprintf(stderr, "%s\n", logstring);
+	time_t timeSinceStart = time(NULL) - start_time;
+	int hours = timeSinceStart / 3600;
+	int remainder = timeSinceStart % 3600; 
+	int minutes = remainder / 60; 
+	int seconds = remainder % 60;
+	int chars_written = fprintf(stderr, "[%2i:%2i:%2i] %s\n",hours, minutes, seconds, logstring);
 	return Py_BuildValue("i", chars_written);
 
 }
@@ -382,6 +389,7 @@ int main(int argc, char **argv)
 	char modeller_path[MAX_PATH] = {0};
 	char exec_path[MAX_PATH] = { 0 };
 	int rc;
+	start_time = time(NULL);
 
 	boinc_init();
 

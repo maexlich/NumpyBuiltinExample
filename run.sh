@@ -167,6 +167,7 @@ buildPythonModule()
 # call the script routines
 
 set -x
+
 if [ "$1" == "loader" ]; then
   buildloader
 else
