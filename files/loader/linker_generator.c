@@ -28,7 +28,7 @@
 
 #define APP_NAME "linker_generator"
 #define APP_MAJOR 0
-#define APP_MINOR 17
+#define APP_MINOR 22
 
  // Use linux functions
 #define getExecPath getExecPath_l
