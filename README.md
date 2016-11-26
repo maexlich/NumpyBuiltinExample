@@ -1,6 +1,8 @@
 Numpy Builtin Example
 =====================
 
+DISCLAMER: This is an adapted version of the NumpyBuiltinExample from patmarion and adopted to a highly specific use case (BOINC project iGEM@Home). Maybe the code is of some use for people trying to get a statically linked portable python binary set up.
+
 This project demonstrates how to build a basic program that embeds
 Python and NumPy.  The compiled binary uses static linking and frozen
 modules in order to be fully standalone.  NumPy and the Python
